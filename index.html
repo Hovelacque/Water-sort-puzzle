@@ -1,0 +1,62 @@
+<style>
+    body {
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<canvas></canvas>
+<script>
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 1280;
+    canvas.height = 768;
+
+
+    class Pote {
+        constructor(x, y, h, w) {
+            this.x = x;
+            this.y = y;
+            this.h = h;
+            this.w = w;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "white";
+            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2, 0, Math.PI);
+            ctx.lineTo(this.x, this.y);
+            ctx.lineTo(this.x + this.w, this.y);
+            ctx.lineTo(this.x + this.w, this.y + this.h);
+            ctx.stroke();
+        }
+    }
+
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let x = 100;
+    let y = 100;
+    const offsetX = 25;
+    const offsetY = 25;
+    const h = 200;
+    const w = 50;
+    const potes = [];
+
+    for (var i = 0; i < 2; i++) {
+        // let offsetY = (h + w )* i;
+        for (var j = 0; j < 5; j++) {
+            // let offsetX = j * x;
+            x += w + offsetX;
+            potes.push(new Pote(x, y, h, w))
+        }
+        y += h + w
+    }
+
+    potes.forEach(x => x.draw());
+
+</script>
