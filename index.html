@@ -15,17 +15,27 @@
     canvas.height = 768;
 
 
-    class Pote {
+    class Tube {
+        lineWidth = 5;
+
         constructor(x, y, h, w) {
             this.x = x;
             this.y = y;
             this.h = h;
             this.w = w;
+            this.colors = [
+                "red",
+                "blue",
+                "green",
+                "purple",
+                "yellow",
+                "orange"
+            ]
         }
 
-        draw() {
+        drawTube() {
             ctx.beginPath();
-            ctx.lineWidth = 5;
+            ctx.lineWidth = this.lineWidth;
             ctx.strokeStyle = "white";
             ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2, 0, Math.PI);
             ctx.lineTo(this.x, this.y);
@@ -33,30 +43,46 @@
             ctx.lineTo(this.x + this.w, this.y + this.h);
             ctx.stroke();
         }
+
+        draw() {
+            this.drawTube();
+
+            const colorHeight = this.w / this.colors.length;
+
+            ctx.beginPath();
+            ctx.fillStyle = "red";
+            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2 - this.lineWidth / 2, 0, Math.PI);
+            ctx.fill();
+
+            ctx.fillStyle = "blue";
+            ctx.fillRect(this.x + this.lineWidth / 2, this.y + this.lineWidth / 2, this.w - this.lineWidth, colorHeight)
+        }
     }
 
 
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    let x = 100;
-    let y = 100;
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
     const offsetX = 25;
-    const offsetY = 25;
+    const offsetY = 50;
     const h = 200;
     const w = 50;
     const potes = [];
 
+    let posX = x;
+    let posY = y;
     for (var i = 0; i < 2; i++) {
-        // let offsetY = (h + w )* i;
         for (var j = 0; j < 5; j++) {
-            // let offsetX = j * x;
-            x += w + offsetX;
-            potes.push(new Pote(x, y, h, w))
+            posX += w + offsetX;
+            potes.push(new Tube(posX, posY, h, w))
         }
-        y += h + w
+        posX = x;
+        posY += h + offsetY;
     }
 
-    potes.forEach(x => x.draw());
+    // potes.forEach(x => x.draw());
 
+    potes[0].draw()
 </script>
