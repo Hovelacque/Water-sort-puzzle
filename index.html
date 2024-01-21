@@ -19,7 +19,7 @@
     canvas.height = 768;
 
     class Tube {
-        lineWidth = 5;
+        lineWidth = 6;
 
         constructor(x, y, h, w, initialColors) {
             this.x = x;
@@ -27,19 +27,20 @@
             this.w = w; //50
             this.h = h;
             this.selected = false;
+            this.maxColors = 4;
             this.colors = initialColors;
-            this.maxColors = 6;
             this.colorHeight = (this.h + this.w / 2) / this.maxColors;
         }
 
         drawTube() {
+            const halfLineWidth = this.lineWidth / 2;
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth;
             ctx.strokeStyle = "white";
-            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2, 0, Math.PI);
-            ctx.lineTo(this.x, this.y);
-            ctx.lineTo(this.x + this.w, this.y);
-            ctx.lineTo(this.x + this.w, this.y + this.h);
+            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2 + halfLineWidth, 0, Math.PI);
+            ctx.lineTo(this.x - halfLineWidth, this.y);
+            ctx.lineTo(this.x + this.w + halfLineWidth, this.y);
+            ctx.lineTo(this.x + this.w + halfLineWidth, this.y + this.h);
             ctx.stroke();
         }
 
@@ -53,7 +54,7 @@
 
             let posY = this.y + this.h - this.w / 4;
             for (let i = 1; i < this.colors.length; i++) {
-                posY -= this.colorHeight;
+                posY -= this.colorHeight - 2;
                 const color = this.colors[i];
                 ctx.fillStyle = color;
                 ctx.fillRect(this.x, posY, this.w, this.colorHeight);
@@ -61,10 +62,10 @@
         }
 
         draw() {
-            this.drawTube();
-
             if (this.colors.length > 0)
                 this.drawColors();
+
+            this.drawTube();
         }
 
         select() {
