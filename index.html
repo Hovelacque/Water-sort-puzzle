@@ -1,12 +1,16 @@
 <style>
     body {
         background-color: white;
+        /*
         display: flex;
         justify-content: center;
         align-items: center;
+        */
     }
 </style>
 <canvas></canvas>
+
+<script src="level1.js"></script>
 <script>
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
@@ -14,23 +18,18 @@
     canvas.width = 1280;
     canvas.height = 768;
 
-
     class Tube {
         lineWidth = 5;
 
-        constructor(x, y, h, w) {
+        constructor(x, y, h, w, initialColors) {
             this.x = x;
             this.y = y;
+            this.w = w; //50
             this.h = h;
-            this.w = w;
-            this.colors = [
-                "red",
-                "blue",
-                "green",
-                "purple",
-                "yellow",
-                "orange"
-            ]
+            this.selected = false;
+            this.colors = initialColors;
+            this.maxColors = 6;
+            this.colorHeight = (this.h + this.w / 2) / this.maxColors;
         }
 
         drawTube() {
@@ -44,45 +43,117 @@
             ctx.stroke();
         }
 
+        drawColors() {
+            ctx.beginPath();
+            ctx.fillStyle = this.colors[0];
+            const diff = this.colorHeight - this.w / 2;
+            ctx.fillRect(this.x, this.y + this.h - this.w / 4, this.w, diff);
+            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2, 0, Math.PI);
+            ctx.fill();
+
+            let posY = this.y + this.h - this.w / 4;
+            for (let i = 1; i < this.colors.length; i++) {
+                posY -= this.colorHeight;
+                const color = this.colors[i];
+                ctx.fillStyle = color;
+                ctx.fillRect(this.x, posY, this.w, this.colorHeight);
+            }
+        }
+
         draw() {
             this.drawTube();
 
-            const colorHeight = this.w / this.colors.length;
-
-            ctx.beginPath();
-            ctx.fillStyle = "red";
-            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2 - this.lineWidth / 2, 0, Math.PI);
-            ctx.fill();
-
-            ctx.fillStyle = "blue";
-            ctx.fillRect(this.x + this.lineWidth / 2, this.y + this.lineWidth / 2, this.w - this.lineWidth, colorHeight)
+            if (this.colors.length > 0)
+                this.drawColors();
         }
+
+        select() {
+            this.selected = true;
+            this.y -= 20;
+        }
+
+        deselect() {
+            this.selected = false;
+            this.y += 20;
+        }
+
+        isOver() {
+            return this.colors.length == this.maxColors;
+        }
+
+        isMouseOver() {
+            if (mouse.x > this.x && mouse.x < this.x + this.w &&
+                mouse.y > this.y && mouse.y < this.y + this.h)
+                return true;
+            else
+                return false;
+        }
+
     }
 
-
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    let x = canvas.width / 2;
-    let y = canvas.height / 2;
+    let x = canvas.width / 4;
+    let y = canvas.height / 4;
     const offsetX = 25;
     const offsetY = 50;
     const h = 200;
     const w = 50;
-    const potes = [];
+    const tubes = [];
 
+    /* create tubes */
     let posX = x;
-    let posY = y;
-    for (var i = 0; i < 2; i++) {
-        for (var j = 0; j < 5; j++) {
-            posX += w + offsetX;
-            potes.push(new Tube(posX, posY, h, w))
-        }
-        posX = x;
-        posY += h + offsetY;
+    for (var i = 0; i < initialColors.length; i++) {
+        posX += w + offsetX;
+        tubes.push(new Tube(posX, y, h, w, initialColors[i]))
     }
+    // let posX = x;
+    // let posY = y;
+    // for (var i = 0; i < 1; i++) {
+    //     for (var j = 0; j < 5; j++) {
+    //         posX += w + offsetX;
+    //         tubes.push(new Tube(posX, posY, h, w, initialColors[0]))
+    //     }
+    //     posX = x;
+    //     posY += h + offsetY;
+    // }
 
-    // potes.forEach(x => x.draw());
+    const mouse = {
+        x: undefined,
+        y: undefined
+    }
+    canvas.addEventListener('click', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
 
-    potes[0].draw()
+        const selectedTube = tubes.find(x => x.selected);
+        const tubeClicked = tubes.find(x => x.isMouseOver());
+
+        if (selectedTube && tubeClicked && tubeClicked != selectedTube) {
+            if (tubeClicked.isOver()) {
+                selectedTube.deselect();
+            }
+            else { //change
+                const colorRemoved = selectedTube.colors.pop();
+                tubeClicked.colors.push(colorRemoved);
+                selectedTube.deselect();
+            }
+        }
+        else if (!selectedTube && tubeClicked) {
+            tubeClicked.select();
+        }
+        else if (selectedTube && !tubeClicked) {
+            selectedTube.deselect();
+        }
+    })
+
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        tubes.forEach(x => x.draw());
+    }
+    animate();
+
 </script>
