@@ -10,7 +10,7 @@
 </style>
 <canvas></canvas>
 
-<script src="level1.js"></script>
+<script src="level2.js"></script>
 <script>
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
@@ -19,44 +19,47 @@
     canvas.height = 768;
 
     class Tube {
-        lineWidth = 6;
+        lineWidth = 5;
 
-        constructor(x, y, h, w, initialColors) {
+        constructor(x, y, h, w, initialColors, maxColors) {
             this.x = x;
             this.y = y;
-            this.w = w; //50
+            this.w = w;
             this.h = h;
             this.selected = false;
-            this.maxColors = 4;
+            this.maxColors = maxColors;
             this.colors = initialColors;
-            this.colorHeight = (this.h + this.w / 2) / this.maxColors;
+            //minimum height size is the width / 2  of the tube (is the radius of the base of tube)
+            this.colorHeight = (this.h / this.maxColors) < this.w / 2 ? this.w / 2 : this.h / this.maxColors;
         }
 
         drawTube() {
             const halfLineWidth = this.lineWidth / 2;
+            const halfColorHeight = 0;//this.colorHeight / 2;
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth;
             ctx.strokeStyle = "white";
-            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2 + halfLineWidth, 0, Math.PI);
-            ctx.lineTo(this.x - halfLineWidth, this.y);
-            ctx.lineTo(this.x + this.w + halfLineWidth, this.y);
-            ctx.lineTo(this.x + this.w + halfLineWidth, this.y + this.h);
+            const diff = this.colorHeight - this.w / 2;
+            ctx.arc(this.x + this.w / 2, this.y + this.h - this.colorHeight + diff, this.w / 2 + halfLineWidth, 0, Math.PI);
+            ctx.lineTo(this.x - halfLineWidth, this.y - halfColorHeight);
+            ctx.lineTo(this.x + this.w + halfLineWidth, this.y - halfColorHeight);
+            ctx.lineTo(this.x + this.w + halfLineWidth, this.y + this.h - this.colorHeight + diff);
             ctx.stroke();
         }
 
         drawColors() {
             ctx.beginPath();
             ctx.fillStyle = this.colors[0];
+            const bottomTubeY = this.y + this.h;
             const diff = this.colorHeight - this.w / 2;
-            ctx.fillRect(this.x, this.y + this.h - this.w / 4, this.w, diff);
-            ctx.arc(this.x + this.w / 2, this.y + this.h, this.w / 2, 0, Math.PI);
+            ctx.fillRect(this.x, bottomTubeY - this.colorHeight, this.w, diff)
+            ctx.arc(this.x + this.w / 2, bottomTubeY - this.colorHeight + diff, this.w / 2, 0, Math.PI)
             ctx.fill();
 
-            let posY = this.y + this.h - this.w / 4;
+            let posY = this.y + this.h - this.colorHeight;
             for (let i = 1; i < this.colors.length; i++) {
-                posY -= this.colorHeight - 2;
-                const color = this.colors[i];
-                ctx.fillStyle = color;
+                posY -= this.colorHeight - 3; //if remove -3 restore halfColorHeight in drawTube
+                ctx.fillStyle = this.colors[i];
                 ctx.fillRect(this.x, posY, this.w, this.colorHeight);
             }
         }
@@ -96,15 +99,16 @@
     let y = canvas.height / 4;
     const offsetX = 25;
     const offsetY = 50;
-    const h = 200;
+    let maxColors = initialColors[0].length;
     const w = 50;
+    const h = 250;//maxColors * this.w / 2; //180;
     const tubes = [];
 
     /* create tubes */
     let posX = x;
     for (var i = 0; i < initialColors.length; i++) {
         posX += w + offsetX;
-        tubes.push(new Tube(posX, y, h, w, initialColors[i]))
+        tubes.push(new Tube(posX, y, h, w, initialColors[i], maxColors))
     }
     // let posX = x;
     // let posY = y;
