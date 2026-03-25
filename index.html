@@ -10,7 +10,7 @@
 </style>
 <canvas></canvas>
 
-<script src="level2.js"></script>
+<script src="level0.js"></script>
 <script>
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
@@ -85,6 +85,10 @@
             return this.colors.length == this.maxColors;
         }
 
+        isEmpty() {
+            return this.colors.length == 0
+        }
+
         isMouseOver() {
             if (mouse.x > this.x && mouse.x < this.x + this.w &&
                 mouse.y > this.y && mouse.y < this.y + this.h)
@@ -93,6 +97,19 @@
                 return false;
         }
 
+        getTopColor() {
+            return this.colors[this.colors.length - 1];
+        }
+
+        receiveLiquid(tube) {
+            const colorRemoved = tube.getTopColor();
+            do {
+                if (this.isOver() || tube.isEmpty())
+                    break;
+                const colorRemoved = tube.colors.pop();
+                this.colors.push(colorRemoved);
+            } while (colorRemoved == tube.getTopColor())
+        }
     }
 
     let x = canvas.width / 4;
@@ -137,8 +154,10 @@
                 selectedTube.deselect();
             }
             else { //change
-                const colorRemoved = selectedTube.colors.pop();
-                tubeClicked.colors.push(colorRemoved);
+                if (tubeClicked.isEmpty() ||
+                    (selectedTube.getTopColor() == tubeClicked.getTopColor())
+                )
+                    tubeClicked.receiveLiquid(selectedTube)
                 selectedTube.deselect();
             }
         }

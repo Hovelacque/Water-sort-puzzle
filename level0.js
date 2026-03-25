@@ -1,0 +1,24 @@
+const initialColors = [
+    [
+        "yellow",
+        "yellow",
+        "red",
+        "purple",
+    ],
+    [
+        "purple",
+        "yellow",
+        "red",
+        "purple"
+    ],
+    [
+        "red",
+        "purple",
+        "yellow",
+        "red"
+    ],
+    [
+    ],
+    [
+    ]
+]
