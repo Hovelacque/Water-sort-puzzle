@@ -11,6 +11,8 @@
 <canvas></canvas>
 
 <script src="level0.js"></script>
+<script src="geradorGPT.js"></script>
+<script src="geradorRandom.js"></script>
 <script>
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
@@ -122,21 +124,13 @@
     const tubes = [];
 
     /* create tubes */
+    // const newLevel = initialColors;
+    const newLevel = geraFase(4, 2);
     let posX = x;
-    for (var i = 0; i < initialColors.length; i++) {
+    for (var i = 0; i < newLevel.length; i++) {
         posX += w + offsetX;
-        tubes.push(new Tube(posX, y, h, w, initialColors[i], maxColors))
+        tubes.push(new Tube(posX, y, h, w, newLevel[i], maxColors))
     }
-    // let posX = x;
-    // let posY = y;
-    // for (var i = 0; i < 1; i++) {
-    //     for (var j = 0; j < 5; j++) {
-    //         posX += w + offsetX;
-    //         tubes.push(new Tube(posX, posY, h, w, initialColors[0]))
-    //     }
-    //     posX = x;
-    //     posY += h + offsetY;
-    // }
 
     const mouse = {
         x: undefined,
