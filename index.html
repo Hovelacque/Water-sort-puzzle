@@ -121,15 +121,19 @@
     let maxColors = initialColors[0].length;
     const w = 50;
     const h = 250;//maxColors * this.w / 2; //180;
-    const tubes = [];
+    let tubes = [];
 
     /* create tubes */
     // const newLevel = initialColors;
-    const newLevel = geraFase(4, 2);
-    let posX = x;
-    for (var i = 0; i < newLevel.length; i++) {
-        posX += w + offsetX;
-        tubes.push(new Tube(posX, y, h, w, newLevel[i], maxColors))
+    const newLevel = geraFase(4, 4, 2);
+
+    function createTubes() {
+        tubes = [];
+        let posX = x;
+        for (var i = 0; i < newLevel.length; i++) {
+            posX += w + offsetX;
+            tubes.push(new Tube(posX, y, h, w, [...newLevel[i]], maxColors))
+        }
     }
 
     const mouse = {
@@ -174,4 +178,11 @@
     }
     animate();
 
+    function reiniciar() {
+        createTubes()
+    }
+    createTubes();
+
 </script>
+
+<button onclick="reiniciar()">Reiniciar</button>

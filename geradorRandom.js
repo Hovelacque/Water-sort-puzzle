@@ -1,10 +1,12 @@
 const cores = ['red', 'blue', 'green', 'yellow'];
 
 function geraFase(
+    qtdCores = 4, //quantidade de cores
     capacidade = 4, // por tubo
     tubosExtras = 2 // tubos vazios extras
 ) {
-    let contadorDePartes = cores.map(cor => {
+    const coresDoJogo = cores.slice(0, qtdCores)
+    let contadorDePartes = coresDoJogo.map(cor => {
         return {
             cor,
             quantidade: capacidade
