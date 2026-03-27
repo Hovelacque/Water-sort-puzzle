@@ -1,4 +1,3 @@
-const cores = ['red', 'blue', 'green', 'yellow'];
 
 function geraFase(
     qtdCores = 4, //quantidade de cores

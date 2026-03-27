@@ -10,9 +10,11 @@
 </style>
 <canvas></canvas>
 
+<script src="colors.js"></script>
 <script src="level0.js"></script>
 <script src="geradorGPT.js"></script>
 <script src="geradorRandom.js"></script>
+<script src="share.js"></script>
 <script>
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
@@ -125,7 +127,14 @@
 
     /* create tubes */
     // const newLevel = initialColors;
-    const newLevel = geraFase(4, 4, 2);
+    const newLevel = haveLevelInURL() ? createLevelFromURL() : geraFase(4, 4, 2);
+
+    const uri = createLink(newLevel);
+    const tagA = document.createElement('a');
+    tagA.href = uri;
+    tagA.innerText = uri
+    const body = document.getElementsByTagName('body')
+    body[0].append(tagA)
 
     function createTubes() {
         tubes = [];

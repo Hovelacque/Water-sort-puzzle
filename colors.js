@@ -1,0 +1,1 @@
+const cores = ['red', 'blue', 'green', 'yellow'];
